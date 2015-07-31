@@ -1,19 +1,74 @@
 <!DOCTYPE html>
 <html>
+<style>
+.Caption {
+font-family: Arial;
+font-weight: bold;
+color:      #123456;
+}
+</style>
+
+<script type="text/javascript">
+
+var SlideShowSpeed = 3000;
+var CrossFadeDuration = 3;
+
+var Picture = new Array();
+var Caption = new Array();
+var count = -1;
+{% if images %}
+	{% for image in images %}
+		count = count + 1
+		Picture[count] = new Image()
+		Picture[count].src = "{{image.imagefile.url}}"
+		Caption[count] = "{{image.caption}}"
+	{% endfor %}
+{% endif %}
+
+var tss;
+var iss;
+var jss = 0;
+var pss = Picture.length;
+
+var preLoad = new Array();
+for (iss = 0; iss < pss; iss++){
+preLoad[iss] = Picture[iss];}
+
+function runSlideShow(){
+	if (count >= 0){
+		if (document.all){
+			document.images.PictureBox.style.filter="blendTrans(duration=2)";
+			document.images.PictureBox.style.filter="blendTrans(duration=CrossFadeDuration)";
+			document.images.PictureBox.filters.blendTrans.Apply();}
+		document.images.PictureBox.src = preLoad[jss].src;
+		if (document.getElementById) document.getElementById("CaptionBox").innerHTML = Caption[jss];
+		if (document.all) document.images.PictureBox.filters.blendTrans.Play();
+		jss = jss+1;
+		if (jss >= (pss)) jss=0;
+		tss = setTimeout('runSlideShow()', SlideShowSpeed);
+	}
+}
+</script>
 	<head>
 		<meta charset="utf-8">
 		<title>Django Image Upload</title>	
 	</head>
 
-	<body>
+	<body onload=runSlideShow()>
+
+<table border=0 cellpadding=0 cellspacing=0>
+  <tr>
+    <td width=350 height=280>
+    <img src="//:0" name=PictureBox width=350 height=280>
+    </td>
+  </tr>
+  <tr>
+    <td id=CaptionBox class=Caption align=center bgcolor=#fedcba>
+    No images found.
+    </td>
+  </tr>
+</table>
 		<!-- List of uploaded images -->
-		{% if images %}
-			{% for image in images %}
-				<img src="{{image.imagefile.url}}" alt={{ image.imagefile.name }}>
-			{% endfor %}
-		{% else %}
-			<p>No images.</p>
-		{% endif %}
 
 		<!-- Upload form. Note enctype attribute! -->
 		<form action="{% url "list" %}" method="post" enctype="multipart/form-data">
