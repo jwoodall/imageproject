@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Django Image Upload</title>	
+	</head>
+
+	<body>
+		<!-- List of uploaded images -->
+		{% if images %}
+			{% for image in images %}
+				<img src="{{image.imagefile.url}}" alt={{ image.imagefile.name }}>
+			{% endfor %}
+		{% else %}
+			<p>No images.</p>
+		{% endif %}
+
+		<!-- Upload form. Note enctype attribute! -->
+		<form action="{% url "list" %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<p>{{ form.non_field_errors }}</p>
+			<p>{{ form.imagefile.label_tag }} {{ form.imagefile.help_text }}</p>
+			<p>
+				{{ form.imagefile.errors }}
+				{{ form.imagefile }}
+			</p>
+			<p>{{ form.caption.label_tag }} {{ form.caption.help_text }}</p>
+			<p>
+				{{ form.caption.errors }}
+				{{ form.caption }}
+			</p>
+			<p>{{ form.short_desc.label_tag }} {{ form.short_desc.help_text }}</p>
+			<p>
+				{{ form.short_desc.errors }}
+				{{ form.short_desc }}
+			</p>
+			<p><input type="submit" value="Upload" /></p>
+		</form>
+		
+	</body>
+
+</html> 
