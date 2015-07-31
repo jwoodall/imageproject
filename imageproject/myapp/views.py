@@ -29,3 +29,15 @@ def list(request):
         {'images': images, 'form': form},
         context_instance=RequestContext(request)
     )
+def show(request):
+    image_pk = request.GET.get('image_pk')
+    try: 
+        getImage = image.objects.get(pk=image_pk)
+    except image.DoesNotExist:
+        return HttpResponseRedirect(reverse('imageproject.myapp.views.list'))
+       
+    return render_to_response(
+        'myapp/show.html',
+        {'image': getImage},
+        context_instance=RequestContext(request)
+    )
